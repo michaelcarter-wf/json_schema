@@ -2,11 +2,11 @@
 library json_schema.json_schema;
 
 import 'dart:async';
-import 'dart:convert' as convert;
-import 'dart:io';
 import 'dart:math';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as PATH;
+
+import 'package:w_transport/w_transport.dart';
 
 // custom <additional imports>
 // end <additional imports>

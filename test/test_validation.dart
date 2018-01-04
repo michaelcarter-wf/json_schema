@@ -6,6 +6,7 @@ import 'package:json_schema/json_schema.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
+import 'package:w_transport/vm.dart';
 
 // custom <additional imports>
 // end <additional imports>
@@ -16,6 +17,7 @@ final _logger = new Logger('test_validation');
 // end <library test_validation>
 
 main([List<String> args]) {
+  configureWTransportForVM();
   Logger.root.onRecord.listen(
       (LogRecord r) => print("${r.loggerName} [${r.level}]:\t${r.message}"));
   Logger.root.level = Level.OFF;
@@ -65,7 +67,7 @@ main([List<String> args]) {
               bool validationResult;
               bool expectedResult = validationTest["valid"];
               var checkResult =
-                  expectAsync(() => expect(validationResult, expectedResult));
+                  expectAsync0(() => expect(validationResult, expectedResult));
               Schema.createSchema(schemaData).then((schema) {
                 validationResult = schema.validate(instance);
                 checkResult();

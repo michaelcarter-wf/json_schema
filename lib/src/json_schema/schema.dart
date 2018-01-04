@@ -67,29 +67,21 @@ class Schema {
 
   // custom <class Schema>
 
-  static Future<Schema> createSchemaFromUrl(String schemaUrl) {
+  static Future<Schema> createSchemaFromUrl(String schemaUrl) async {
+    HttpClient client = new HttpClient();
     Uri uri = Uri.parse(schemaUrl);
-    if (uri.scheme == 'http') {
+    if (uri.scheme == 'http' || uri.scheme == '') {
       _logger.info('Getting url $uri');
-      return new HttpClient().getUrl(uri).then((HttpClientRequest request) {
-        request.followRedirects = true;
-        return request.close();
-      }).then((HttpClientResponse response) {
-        return response
-            .transform(new convert.Utf8Decoder())
-            .join()
-            .then((schemaText) {
-          Map map = convert.JSON.decode(schemaText);
-          return createSchema(map);
-        });
-      });
-    } else if (uri.scheme == 'file' || uri.scheme == '') {
-      return new File(uri.scheme == 'file' ? uri.toFilePath() : schemaUrl)
-          .readAsString()
-          .then((text) => createSchema(convert.JSON.decode(text)));
+      JsonRequest request = client.newJsonRequest();
+
+      request.uri = uri;
+
+      Response response = await request.get();
+      return createSchema(response.body.asJson());
+
     } else {
       throw new FormatException(
-          "Url schemd must be http, file, or empty: $schemaUrl");
+          "Url schema must be http: $schemaUrl. To use a local file, use dart:io to fetch it first, convert to Map, then create a schema");
     }
   }
 
